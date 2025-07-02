@@ -3,29 +3,11 @@
 import { useState } from "react";
 
 const monthNames = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December",
 ];
 
-const dayLabels = [
-	"Monday",
-	"Tuesday",
-	"Wednesday",
-	"Thursday",
-	"Friday",
-	"Saturday",
-	"Sunday"
-];
+const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 function getMonthData(year: number, month: number) {
 	const firstDay = new Date(year, month, 1);
@@ -54,35 +36,25 @@ function getMonthData(year: number, month: number) {
 const yearRange = Array.from({ length: 11 }, (_, i) => 2020 + i);
 
 export default function CalendarWidget({
-  notes,
-  setNotes,
-  onDaySelect,
+	notes,
+	setNotes,
+	onDaySelect,
 }: {
-  notes: {
-    [year: number]: {
-      [month: number]: {
-        [day: number]: {
-          entries: { title: string; description: string }[];
-        };
-      };
-    };
-  };
-  setNotes: React.Dispatch<
-    React.SetStateAction<{
-      [year: number]: {
-        [month: number]: {
-          [day: number]: {
-            entries: { title: string; description: string }[];
-          };
-        };
-      };
-    }>
-  >;
-  onDaySelect?: (day: number, month: number, year: number) => void;
+	notes: {
+		[year: number]: {
+			[month: number]: {
+				[day: number]: {
+					entries: { title: string; description: string }[];
+				};
+			};
+		};
+	};
+	setNotes: React.Dispatch<React.SetStateAction<typeof notes>>;
+	onDaySelect?: (day: number, month: number, year: number) => void;
 }) {
-
-	const [month, setMonth] = useState(0);
-	const [year, setYear] = useState(2025);
+	const today = new Date();
+	const [month, setMonth] = useState(today.getMonth());
+	const [year, setYear] = useState(today.getFullYear());
 	const [showYearMenu, setShowYearMenu] = useState(false);
 	const [showMonthMenu, setShowMonthMenu] = useState(false);
 
@@ -90,6 +62,7 @@ export default function CalendarWidget({
 
 	return (
 		<div className="flex flex-col items-center py-6">
+			{/* Header */}
 			<div className="flex items-center gap-4 mb-4 relative">
 				<button
 					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200"
@@ -97,18 +70,19 @@ export default function CalendarWidget({
 				>
 					&lt;
 				</button>
+
 				<h1 className="text-2xl font-bold text-purple-900 flex items-center gap-2">
+					{/* Month Dropdown */}
 					<div
 						className="relative"
 						onMouseEnter={() => setShowMonthMenu(true)}
 						onMouseLeave={() => setShowMonthMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-purple-200 transition"
+							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-purple-200"
 							type="button"
 						>
-							{monthNames[month]}{" "}
-							<span className="ml-1">▼</span>
+							{monthNames[month]} ▼
 						</button>
 						{showMonthMenu && (
 							<div
@@ -133,16 +107,17 @@ export default function CalendarWidget({
 						)}
 					</div>
 
+					{/* Year Dropdown */}
 					<div
 						className="relative"
 						onMouseEnter={() => setShowYearMenu(true)}
 						onMouseLeave={() => setShowYearMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-yellow-100 text-purple-800 font-bold hover:bg-yellow-200 transition"
+							className="px-2 py-1 rounded bg-yellow-100 text-purple-800 font-bold hover:bg-yellow-200"
 							type="button"
 						>
-							{year} <span className="ml-1">▼</span>
+							{year} ▼
 						</button>
 						{showYearMenu && (
 							<div
@@ -167,6 +142,7 @@ export default function CalendarWidget({
 						)}
 					</div>
 				</h1>
+
 				<button
 					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200"
 					onClick={() => setMonth((m) => (m === 11 ? 0 : m + 1))}
@@ -175,15 +151,13 @@ export default function CalendarWidget({
 				</button>
 			</div>
 
+			{/* Calendar Table */}
 			<div className="overflow-x-auto">
 				<table className="border-collapse bg-white/80 rounded-xl shadow-xl">
 					<thead>
 						<tr>
 							{dayLabels.map((label) => (
-								<th
-									key={label}
-									className="px-4 py-2 border text-purple-700 font-semibold text-center"
-								>
+								<th key={label} className="px-4 py-2 border text-purple-700 font-semibold text-center">
 									{label}
 								</th>
 							))}
@@ -192,31 +166,42 @@ export default function CalendarWidget({
 					<tbody>
 						{weeks.map((week, i) => (
 							<tr key={i}>
-								{week.map((day, j) => (
-									<td
-										key={j}
-										className="w-28 h-20 border align-top relative cursor-pointer transition hover:bg-yellow-100"
-										onClick={() => {
-											if (day) {
-												onDaySelect?.(day, month, year);
-											}
-										}}
-									>
-										<div className="absolute top-1 left-2 text-xs text-gray-700 font-semibold">
-											{day || ""}
-										</div>
-										{/* Show all entry titles if available */}
-										{day && notes[year]?.[month]?.[day]?.entries?.length > 0 && (
-											<div className="mt-5 text-xs text-purple-800 whitespace-pre-line font-semibold truncate">
-												{notes[year][month][day].entries
-													.filter(entry => entry.title.trim() !== "")
-													.map((entry, idx) => (
-														<div key={idx}>{entry.title}</div>
-													))}
+								{week.map((day, j) => {
+									const hasNotes = day && notes[year]?.[month]?.[day]?.entries?.length > 0;
+									const entryTitles = hasNotes
+										? notes[year][month][day].entries
+											.filter((e) => e.title.trim() !== "")
+											.map((e) => e.title)
+										: [];
+
+									return (
+										<td
+											key={j}
+											className="w-28 h-20 border align-top relative cursor-pointer hover:bg-yellow-100"
+											onClick={() => day && onDaySelect?.(day, month, year)}
+										>
+											<div className="absolute top-1 left-2 text-xs text-gray-700 font-semibold">
+												{day || ""}
 											</div>
-										)}
-									</td>
-								))}
+
+											{/* Optional Note Titles */}
+											{entryTitles.length > 0 && (
+												<div className="mt-5 px-2 text-xs text-purple-800 font-semibold overflow-hidden">
+													{entryTitles.slice(0, 2).map((title, idx) => (
+														<div key={idx} className="truncate">
+															📌 {title}
+														</div>
+													))}
+													{entryTitles.length > 2 && (
+														<div className="text-xs text-gray-500 italic mt-1">
+															+{entryTitles.length - 2} more
+														</div>
+													)}
+												</div>
+											)}
+										</td>
+									);
+								})}
 							</tr>
 						))}
 					</tbody>
@@ -225,4 +210,3 @@ export default function CalendarWidget({
 		</div>
 	);
 }
-	

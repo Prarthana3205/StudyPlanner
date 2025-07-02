@@ -322,7 +322,6 @@ export default function Dashboard() {
             <div
               key={`entry-${idx}-${selectedDayInfo.day}-${selectedDayInfo.month}-${selectedDayInfo.year}`}
               className={`mb-4 relative animate-fade-in`}
-              style={{ animationDelay: `${idx * 60}ms` }}
             >
               <input
                 className="w-full border rounded p-2 mb-2 focus:outline-none focus:border-purple-400 font-semibold text-black"
@@ -373,41 +372,30 @@ export default function Dashboard() {
           <span className="text-xl">+</span>
         </button>
       </div>
-      <style jsx global>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.4s both;
-        }
-      `}</style>
     </div>
   );
 }
 
-  useEffect(() => {
-    // Fetch user from API endpoint `/api/me`
-    async function fetchUser() {
-      try {
-        const res = await fetch("/api/me", { credentials: "include" });
-        if (res.ok) {
-          const data = await res.json();
-          setUser({
-            name:
-              typeof data.name === "string" && data.name.trim()
-                ? data.name
-                : null,
-          });
-        } else {
-          setUser({ name: null });
-        }
-      } catch {
-        setUser({ name: null });
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("/api/me", {
+        method: "GET",
+        credentials: "include", // Very important to include cookies!
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      } else {
+        console.error("Failed to fetch user:", res.status);
       }
+    } catch (err) {
+      console.error("Error fetching user:", err);
     }
-    fetchUser();
-  }, []);
+  };
+
+  fetchUser();
+}, []);
 
   // Fetch notes from backend on mount
   useEffect(() => {
