@@ -23,7 +23,8 @@ const dayLabels = [
 	"Wednesday",
 	"Thursday",
 	"Friday",
-	"Sat/Sun",
+	"Saturday",
+	"Sunday"
 ];
 
 function getMonthData(year: number, month: number) {
