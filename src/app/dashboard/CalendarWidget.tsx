@@ -1,6 +1,6 @@
-"use client";
+    "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const monthNames = [
 	"January", "February", "March", "April", "May", "June",
@@ -186,17 +186,19 @@ export default function CalendarWidget({
 
 											{/* Optional Note Titles */}
 											{entryTitles.length > 0 && (
-												<div className="mt-5 px-2 text-xs text-purple-800 font-semibold overflow-hidden">
-													{entryTitles.slice(0, 2).map((title, idx) => (
+												<div
+													className="mt-5 px-2 text-xs text-purple-800 font-semibold overflow-y-auto"
+													style={{
+														maxHeight: "56px", // fits about 3-4 lines, adjust as needed
+														minHeight: "20px",
+														scrollbarWidth: "thin",
+													}}
+												>
+													{entryTitles.map((title, idx) => (
 														<div key={idx} className="truncate">
-															📌 {title}
+															{title}
 														</div>
 													))}
-													{entryTitles.length > 2 && (
-														<div className="text-xs text-gray-500 italic mt-1">
-															+{entryTitles.length - 2} more
-														</div>
-													)}
 												</div>
 											)}
 										</td>
@@ -210,3 +212,4 @@ export default function CalendarWidget({
 		</div>
 	);
 }
+									

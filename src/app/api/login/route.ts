@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const { email, password } = await req.json();
 
     await dbConnect();
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }) as { _id: any; email: string; name: string; password: string };
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
@@ -21,8 +21,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // ✅ Create a token that includes user email
-    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign(
+    { email: user.email, userId: user._id.toString() }, // include userId
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
 
     // ✅ Store it in a cookie
     const response = NextResponse.json({

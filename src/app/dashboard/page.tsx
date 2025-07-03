@@ -138,7 +138,7 @@ export default function Dashboard() {
       const response = await fetch("/api/calendar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include",  // ✅ this is mandatory for cookies
         body: JSON.stringify({
           date: `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
           entries: validEntries,
@@ -381,7 +381,7 @@ useEffect(() => {
     try {
       const res = await fetch("/api/me", {
         method: "GET",
-        credentials: "include", // Very important to include cookies!
+        credentials: "include", 
       });
       if (res.ok) {
         const data = await res.json();
