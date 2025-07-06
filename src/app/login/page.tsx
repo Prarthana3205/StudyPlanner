@@ -116,7 +116,7 @@ export default function Login() {
                 <input type="checkbox" className="accent-purple-600" />
                 Remember me
               </label>
-              <Link href="/forgot-password" className="text-purple-600 hover:underline">
+              <Link href="/forgot-password" className="text-purple-600">
                 Forgot Password
               </Link>
             </div>
@@ -124,14 +124,14 @@ export default function Login() {
             {success && <div className="text-green-600 text-sm">{success}</div>}
             <button
               type="submit"
-              className="w-full bg-purple-600 text-white py-2 rounded font-semibold transition hover:bg-purple-800"
+              className="w-full bg-purple-600 text-white py-2 rounded font-semibold"
               disabled={loading}
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
             <button
               type="button"
-              className="w-full flex items-center justify-center border border-purple-300 py-2 rounded hover:bg-purple-100"
+              className="w-full flex items-center justify-center border border-purple-300 py-2 rounded"
               onClick={() => window.location.href = "/api/auth/google"}
             >
               <img src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
@@ -140,7 +140,7 @@ export default function Login() {
           </form>
           <div className="mt-8 text-center text-purple-600 text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-purple-800 font-medium hover:underline">
+            <Link href="/register" className="text-purple-800 font-medium">
               Sign up
             </Link>
           </div>

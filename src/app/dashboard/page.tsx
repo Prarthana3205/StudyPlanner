@@ -15,11 +15,11 @@ const monthNames = [
 function DashboardContent() {
   return (
     <div>
-      <h1 className="text-3xl font-bold text-purple-900 mb-6">
+      <h1 className="text-3xl font-bold text-purple-900 dark:text-purple-300 mb-6">
         Welcome to your Dashboard
       </h1>
       {/* ...add your dashboard widgets, stats, to-do, etc. here... */}
-      <p className="text-purple-700">
+      <p className="text-purple-700 dark:text-purple-300">
         This is your main dashboard area. Add your widgets and content here.
       </p>
     </div>
@@ -47,6 +47,27 @@ export default function Dashboard() {
   } | null>(null);
   const [agendaOpen, setAgendaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAppearance, setShowAppearance] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("light");
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("theme-mode") || "light"; // Default to light mode
+    if (saved === "light" || saved === "dark" || saved === "system") {
+      setTheme(saved);
+    }
+  }, []);
+
+  // Apply theme to body
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    // Save to localStorage
+    localStorage.setItem("theme-mode", theme);
+    
+    // Dispatch custom event to notify ThemeManager
+    window.dispatchEvent(new CustomEvent("themeChanged", { detail: theme }));
+  }, [theme]);
 
   // notes: { [year]: { [month]: { [day]: { entries: {title, description}[] } } } }
   const [calendarNotes, setCalendarNotes] = useState<{
@@ -301,9 +322,9 @@ export default function Dashboard() {
   if (!selectedDayInfo || !selectedDayInfo.day || !agendaOpen) return null;
 
   return (
-    <div className="w-full md:w-96 bg-white/90 rounded-2xl shadow-xl p-6 ml-0 md:ml-8 mt-8 md:mt-0 h-[calc(100vh-5rem)] flex flex-col relative">
+    <div className="w-full md:w-96 bg-white/90 dark:bg-gray-800/90 text-black dark:text-white rounded-2xl shadow-xl p-6 ml-0 md:ml-8 mt-8 md:mt-0 h-[calc(100vh-5rem)] flex flex-col relative border border-theme">
       <button
-        className="absolute top-2 right-2 text-2xl text-gray-400 hover:text-black font-bold bg-transparent"
+        className="absolute top-2 right-2 text-2xl text-gray-400 hover:text-black dark:hover:text-white font-bold bg-transparent"
         onClick={handleClose}
         title="Close agenda"
         type="button"
@@ -311,7 +332,7 @@ export default function Dashboard() {
       >
         ×
       </button>
-      <h2 className="text-xl font-bold text-purple-800 mb-2">
+      <h2 className="text-xl font-bold text-purple-800 dark:text-purple-300 mb-2">
         Agenda for {selectedDayInfo.day} {monthNames[selectedDayInfo.month]} {selectedDayInfo.year}
       </h2>
       <div className="flex-1" style={{ minHeight: 0, overflowY: "auto" }}>
@@ -324,13 +345,13 @@ export default function Dashboard() {
               className={`mb-4 relative animate-fade-in`}
             >
               <input
-                className="w-full border rounded p-2 mb-2 focus:outline-none focus:border-purple-400 font-semibold text-black"
+                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white rounded p-2 mb-2 focus:outline-none focus:border-purple-400 font-semibold"
                 value={safeEntry.title || ""}
                 onChange={e => handleEntryChange(idx, "title", e.target.value)}
                 placeholder={`Title${localEntries.length > 1 ? ` ${idx + 1}` : ""}`}
               />
               <textarea
-                className="w-full border rounded p-2 resize-none overflow-hidden focus:outline-none focus:border-purple-400 text-black"
+                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white rounded p-2 resize-none overflow-hidden focus:outline-none focus:border-purple-400"
                 style={{ minHeight: "60px", transition: "height 0.2s ease" }}
                 value={safeEntry.description || ""}
                 onChange={(e) => {
@@ -343,7 +364,7 @@ export default function Dashboard() {
               />
               {localEntries.length > 1 && (
                 <button
-                  className="absolute top-0 right-0 mt-1 mr-1 px-2 py-1 rounded text-gray-400 hover:text-black text-lg font-bold bg-transparent"
+                  className="absolute top-0 right-0 mt-1 mr-1 px-2 py-1 rounded text-gray-400 hover:text-black dark:hover:text-white text-lg font-bold bg-transparent"
                   onClick={() => handleDeleteEntry(idx)}
                   title="Delete entry"
                   type="button"
@@ -446,14 +467,14 @@ useEffect(() => {
   // Show loading state while fetching data
   if (isLoading) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-purple-100 to-yellow-50 items-center justify-center">
-        <div className="text-purple-800 text-xl">Loading...</div>
+      <div className="flex min-h-screen bg-gradient-to-br from-purple-100 to-yellow-50 dark:from-gray-900 dark:to-gray-800 items-center justify-center">
+        <div className="text-purple-800 dark:text-purple-300 text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-purple-100 to-yellow-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-purple-100 to-yellow-50 dark:from-gray-900 dark:to-gray-800">{/* Updated to use original gradient for light mode and dark gradient for dark mode */}
       <Sidebar
         user={user}
         sidebarCollapsed={sidebarCollapsed}
@@ -476,7 +497,7 @@ useEffect(() => {
       >
         {!sidebarOpen && (
           <button
-            className="m-4 p-2 rounded bg-purple-700 text-black md:hidden"
+            className="m-4 p-2 rounded bg-purple-700 text-theme md:hidden"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open sidebar"
           >
@@ -513,7 +534,75 @@ useEffect(() => {
             )}
           </div>
         )}
+        {selectedMenu === "Settings" && (
+          <div className="w-full p-10">
+            <style jsx>{`
+              .fade-in-settings {
+                animation: fadeInSettings 0.6s cubic-bezier(0.4,0,0.2,1);
+              }
+              @keyframes fadeInSettings {
+                from { opacity: 0; transform: translateY(16px);}
+                to { opacity: 1; transform: translateY(0);}
+              }
+              .theme-selector {
+                animation: fadeInSettings 0.4s;
+              }
+            `}</style>
+            <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300 mb-6">Settings</h2>
+            <ul className="space-y-4 fade-in-settings">
+              <li
+                className="p-4 rounded bg-purple-50 hover:bg-purple-100 dark:bg-purple-900 dark:hover:bg-purple-800 cursor-pointer font-semibold text-purple-800 dark:text-purple-200 shadow border border-theme"
+                onClick={() => setShowAppearance((v) => !v)}
+              >
+                Appearance Settings
+                {showAppearance && (
+                  <div className="theme-selector mt-4 ml-2 flex flex-col gap-2">
+                    <label className="flex items-center gap-2 cursor-pointer text-purple-800 dark:text-purple-300">
+                      <input
+                        type="radio"
+                        name="theme"
+                        value="light"
+                        checked={theme === "light"}
+                        onChange={() => setTheme("light")}
+                        className="accent-purple-600"
+                      />
+                      <span>☀️ Light</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-purple-800 dark:text-purple-300">
+                      <input
+                        type="radio"
+                        name="theme"
+                        value="dark"
+                        checked={theme === "dark"}
+                        onChange={() => setTheme("dark")}
+                        className="accent-purple-600"
+                      />
+                      <span>🌙 Dark</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-purple-800 dark:text-purple-300">
+                      <input
+                        type="radio"
+                        name="theme"
+                        value="system"
+                        checked={theme === "system"}
+                        onChange={() => setTheme("system")}
+                        className="accent-purple-600"
+                      />
+                      <span>💻 System Default</span>
+                    </label>
+                  </div>
+                )}
+              </li>
+              <li className="p-4 rounded bg-purple-50 hover:bg-purple-100 dark:bg-purple-900 dark:hover:bg-purple-800 cursor-pointer font-semibold text-purple-800 dark:text-purple-200 shadow border border-theme">
+                Reminder Settings
+              </li>
+              <li className="p-4 rounded bg-purple-50 hover:bg-purple-100 dark:bg-purple-900 dark:hover:bg-purple-800 cursor-pointer font-semibold text-purple-800 dark:text-purple-200 shadow border border-theme">
+                Notifications
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+ }

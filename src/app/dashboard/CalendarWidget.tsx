@@ -1,4 +1,4 @@
-    "use client";
+"use client";
 
 import { useState, useEffect } from "react";
 
@@ -65,13 +65,13 @@ export default function CalendarWidget({
 			{/* Header */}
 			<div className="flex items-center gap-4 mb-4 relative">
 				<button
-					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200"
+					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
 					onClick={() => setMonth((m) => (m === 0 ? 11 : m - 1))}
 				>
 					&lt;
 				</button>
 
-				<h1 className="text-2xl font-bold text-purple-900 flex items-center gap-2">
+				<h1 className="text-2xl font-bold text-purple-900 dark:text-purple-200 flex items-center gap-2">
 					{/* Month Dropdown */}
 					<div
 						className="relative"
@@ -79,21 +79,21 @@ export default function CalendarWidget({
 						onMouseLeave={() => setShowMonthMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-purple-200"
+							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-yellow-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
 							type="button"
 						>
 							{monthNames[month]} ▼
 						</button>
 						{showMonthMenu && (
 							<div
-								className="absolute left-0 top-full mt-1 bg-white border rounded shadow-lg z-10 min-w-[140px] overflow-y-auto"
+								className="absolute left-0 top-full mt-1 bg-white dark:bg-gray-800 border rounded shadow-lg z-10 min-w-[140px] overflow-y-auto"
 								style={{ maxHeight: "120px" }}
 							>
 								{monthNames.map((m, idx) => (
 									<div
 										key={idx}
-										className={`px-4 py-2 cursor-pointer hover:bg-yellow-100 text-center ${
-											idx === month ? "bg-purple-100 font-bold" : ""
+										className={`px-4 py-2 cursor-pointer hover:bg-yellow-100 dark:hover:bg-gray-700 text-center ${
+											idx === month ? "bg-purple-100 dark:bg-purple-800 font-bold" : ""
 										}`}
 										onClick={() => {
 											setMonth(idx);
@@ -114,21 +114,21 @@ export default function CalendarWidget({
 						onMouseLeave={() => setShowYearMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-yellow-100 text-purple-800 font-bold hover:bg-yellow-200"
+							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-yellow-200 dark:bg-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-700"
 							type="button"
 						>
 							{year} ▼
 						</button>
 						{showYearMenu && (
 							<div
-								className="absolute left-0 top-full mt-1 bg-white border rounded shadow-lg z-10 min-w-[90px] overflow-y-auto"
+								className="absolute left-0 top-full mt-1 bg-white dark:bg-gray-800 border rounded shadow-lg z-10 min-w-[90px] overflow-y-auto"
 								style={{ maxHeight: "120px" }}
 							>
 								{yearRange.map((y) => (
 									<div
 										key={y}
-										className={`px-4 py-2 cursor-pointer hover:bg-purple-100 text-center ${
-											y === year ? "bg-yellow-100 font-bold" : ""
+										className={`px-4 py-2 cursor-pointer hover:bg-purple-100 dark:hover:bg-gray-700 text-center ${
+											y === year ? "bg-yellow-100 dark:bg-yellow-800 font-bold" : ""
 										}`}
 										onClick={() => {
 											setYear(y);
@@ -144,7 +144,7 @@ export default function CalendarWidget({
 				</h1>
 
 				<button
-					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200"
+					className="px-3 py-1 rounded bg-purple-100 text-purple-700 font-bold hover:bg-purple-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
 					onClick={() => setMonth((m) => (m === 11 ? 0 : m + 1))}
 				>
 					&gt;
@@ -153,11 +153,11 @@ export default function CalendarWidget({
 
 			{/* Calendar Table */}
 			<div className="overflow-x-auto">
-				<table className="border-collapse bg-white/80 rounded-xl shadow-xl">
+				<table className="border-collapse bg-white/80 dark:bg-gray-800/90 rounded-xl shadow-xl">
 					<thead>
 						<tr>
 							{dayLabels.map((label) => (
-								<th key={label} className="px-4 py-2 border text-purple-700 font-semibold text-center">
+								<th key={label} className="px-4 py-2 border text-purple-700 dark:text-purple-300 font-semibold text-center">
 									{label}
 								</th>
 							))}
@@ -177,17 +177,17 @@ export default function CalendarWidget({
 									return (
 										<td
 											key={j}
-											className="w-28 h-20 border align-top relative cursor-pointer hover:bg-yellow-100"
+											className="w-28 h-20 border align-top relative cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900"
 											onClick={() => day && onDaySelect?.(day, month, year)}
 										>
-											<div className="absolute top-1 left-2 text-xs text-gray-700 font-semibold">
+											<div className="absolute top-1 left-2 text-xs text-gray-700 dark:text-gray-300 font-semibold">
 												{day || ""}
 											</div>
 
 											{/* Optional Note Titles */}
 											{entryTitles.length > 0 && (
 												<div
-													className="mt-5 px-2 text-xs text-purple-800 font-semibold overflow-y-auto"
+													className="mt-5 px-2 text-xs text-purple-800 dark:text-purple-300 font-semibold overflow-y-auto"
 													style={{
 														maxHeight: "56px", // fits about 3-4 lines, adjust as needed
 														minHeight: "20px",
@@ -212,4 +212,3 @@ export default function CalendarWidget({
 		</div>
 	);
 }
-									

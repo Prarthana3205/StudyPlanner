@@ -3,24 +3,639 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --card-background: #ffffff;
+  --card-foreground: #171717;
+  --border: #e2e8f0;
+  --input-background: #ffffff;
+  --input-foreground: #171717;
+  --input-border: #e2e8f0;
+  --muted-background: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent-background: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --dropdown-background: #ffffff;
+  --dropdown-border: #e2e8f0;
+  --hover-background: #f8fafc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #111827;
+    --foreground: #f9fafb;
+    --card-background: #1f2937;
+    --card-foreground: #f9fafb;
+    --border: #374151;
+    --input-background: #374151;
+    --input-foreground: #f9fafb;
+    --input-border: #4b5563;
+    --muted-background: #374151;
+    --muted-foreground: #9ca3af;
+    --accent-background: #4b5563;
+    --accent-foreground: #f9fafb;
+    --dropdown-background: #1f2937;
+    --dropdown-border: #4b5563;
+    --hover-background: #4b5563;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Default styling - homepage, login, register pages will use their own backgrounds */
+}
+
+/* Default to light theme styles - highest priority */
+html:not(.dark) body,
+body:not(.theme-dark),
+body.theme-light {
+  background: #ffffff !important;
+  color: #171717 !important;
+}
+
+/* Force reset dark mode when switching to light */
+body.theme-light.theme-dark {
+  background: #ffffff !important;
+  color: #171717 !important;
+}
+
+body.theme-light * {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Enhanced Light Theme - Matching Original Website Color Scheme */
+body.theme-light {
+  --background: linear-gradient(to bottom right, #f3e8ff, #fefce8);
+  --foreground: #581c87;
+  --card-background: rgba(255, 255, 255, 0.95);
+  --card-foreground: #581c87;
+  --border: #e5e7eb;
+  --input-background: rgba(255, 255, 255, 0.95);
+  --input-foreground: #581c87;
+  --input-border: #d1d5db;
+  --muted-background: rgba(248, 250, 252, 0.9);
+  --muted-foreground: #6b7280;
+  --accent-background: rgba(243, 232, 255, 0.9);
+  --accent-foreground: #581c87;
+  --dropdown-background: rgba(255, 255, 255, 0.95);
+  --dropdown-border: #e5e7eb;
+  --hover-background: rgba(254, 243, 199, 0.8);
+  
+  background: linear-gradient(to bottom right, #f3e8ff, #fefce8) !important;
+  color: #581c87 !important;
+}
+
+/* Enhanced light theme input styling with better glassmorphism */
+body.theme-light input,
+body.theme-light textarea {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #581c87 !important;
+  border-color: rgba(209, 213, 219, 0.8) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border-radius: 0.5rem;
+}
+
+body.theme-light input:focus,
+body.theme-light textarea:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.98) !important;
+}
+
+body.theme-light .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px);
+}
+
+body.theme-light .text-black {
+  color: #581c87 !important;
+}
+
+/* Enhanced gradients to match original website */
+body.theme-light .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #f3e8ff, #fefce8) !important;
+}
+
+/* Enhanced glassmorphism cards to match original website */
+body.theme-light .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhanced button styling to match your website */
+body.theme-light .bg-purple-600 {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .bg-purple-600:hover {
+  background: linear-gradient(135deg, #6d28d9, #5b21b6) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+body.theme-light .bg-yellow-400 {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .bg-yellow-400:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+}
+
+/* Enhanced calendar and card styling */
+body.theme-light .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.theme-light .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Enhanced purple accents */
+body.theme-light .bg-purple-100 {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff) !important;
+}
+
+body.theme-light .bg-purple-100:hover {
+  background: linear-gradient(135deg, #e9d5ff, #ddd6fe) !important;
+}
+
+body.theme-light .bg-yellow-100 {
+  background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+}
+
+body.theme-light .bg-yellow-100:hover {
+  background: linear-gradient(135deg, #fde68a, #fcd34d) !important;
+}
+
+/* Enhanced text colors */
+body.theme-light .text-purple-900 {
+  color: #581c87 !important;
+}
+
+body.theme-light .text-purple-800 {
+  color: #6b21a8 !important;
+}
+
+body.theme-light .text-purple-700 {
+  color: #7c3aed !important;
+}
+
+/* Enhanced light theme calendar styling to match original design */
+body.theme-light .bg-purple-100 {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff) !important;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .bg-purple-100:hover,
+body.theme-light .hover\:bg-purple-200:hover {
+  background: linear-gradient(135deg, #e9d5ff, #ddd6fe) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+body.theme-light .bg-yellow-100 {
+  background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .bg-yellow-100:hover,
+body.theme-light .hover\:bg-yellow-200:hover {
+  background: linear-gradient(135deg, #fde68a, #fcd34d) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+body.theme-light .text-purple-700 {
+  color: #7c3aed !important;
+}
+
+body.theme-light .text-purple-800 {
+  color: #6b21a8 !important;
+}
+
+body.theme-light .text-purple-900 {
+  color: #581c87 !important;
+}
+
+body.theme-light .hover\:bg-yellow-100:hover {
+  background: #fef3c7 !important;
+}
+
+/* Enhanced calendar table styling with purplish tone */
+body.theme-light table.bg-white\/80 {
+  background: linear-gradient(135deg, rgba(243, 232, 255, 0.9), rgba(255, 255, 255, 0.85)) !important;
+  border: 1px solid rgba(196, 181, 253, 0.3);
+}
+
+body.theme-light .border {
+  border-color: rgba(196, 181, 253, 0.4) !important;
+}
+
+/* Calendar cells with subtle purple tint */
+body.theme-light td {
+  background: rgba(248, 250, 252, 0.8) !important;
+  border-color: rgba(196, 181, 253, 0.3) !important;
+}
+
+body.theme-light th {
+  background: linear-gradient(135deg, rgba(243, 232, 255, 0.8), rgba(233, 213, 255, 0.8)) !important;
+  border-color: rgba(196, 181, 253, 0.4) !important;
+}
+
+/* Enhanced calendar hover effects with purplish tones */
+body.theme-light td:hover {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.9), rgba(243, 232, 255, 0.7)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  transition: all 0.3s ease;
+}
+
+body.theme-light th:hover {
+  background: linear-gradient(135deg, rgba(233, 213, 255, 0.9), rgba(221, 214, 254, 0.9)) !important;
+  transition: all 0.3s ease;
+}
+
+/* Calendar container enhancement */
+body.theme-light .overflow-x-auto {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.1);
+}
+
+/* Calendar and Agenda Purplish Background Styling */
+
+/* Calendar container background - blend with main background */
+body.theme-light .flex.flex-col.items-center.py-6 {
+  background: transparent !important;
+  border-radius: 1rem;
+  box-shadow: none;
+}
+
+/* Calendar table with transparent background - blend seamlessly */
+body.theme-light table.bg-white\/80 {
+  background: transparent !important;
+}
+
+/* Calendar cells with consistent purplish background - no borders */
+body.theme-light td {
+  background: rgba(243, 232, 255, 0.7) !important;
+  border: none !important;
+}
+
+body.theme-light th {
+  background: rgba(243, 232, 255, 0.8) !important;
+  border: none !important;
+}
+
+/* Agenda menu purplish background */
+body.theme-light .w-full.md\:w-96.bg-white\/90 {
+  background: linear-gradient(135deg, rgba(243, 232, 255, 0.9), rgba(248, 250, 252, 0.95)) !important;
+  border: 1px solid rgba(196, 181, 253, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.15);
+}
+
+/* Dark theme */
+body.theme-dark {
+  --background: #111827;
+  --foreground: #f9fafb;
+  --card-background: #1f2937;
+  --card-foreground: #f9fafb;
+  --border: #374151;
+  --input-background: #374151;
+  --input-foreground: #f9fafb;
+  --input-border: #4b5563;
+  --muted-background: #374151;
+  --muted-foreground: #9ca3af;
+  --accent-background: #4b5563;
+  --accent-foreground: #f9fafb;
+  --dropdown-background: #1f2937;
+  --dropdown-border: #4b5563;
+  --hover-background: #4b5563;
+  
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Theme-aware utility classes */
+.bg-theme {
+  background-color: var(--background);
+}
+
+.text-theme {
+  color: var(--foreground);
+}
+
+.bg-card {
+  background-color: var(--card-background);
+}
+
+.text-card {
+  color: var(--card-foreground);
+}
+
+.border-theme {
+  border-color: var(--border);
+}
+
+.bg-input {
+  background-color: var(--input-background);
+}
+
+.text-input {
+  color: var(--input-foreground);
+}
+
+.border-input {
+  border-color: var(--input-border);
+}
+
+.bg-muted {
+  background-color: var(--muted-background);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.bg-accent {
+  background-color: var(--accent-background);
+}
+
+.text-accent {
+  color: var(--accent-foreground);
+}
+
+.bg-dropdown {
+  background-color: var(--dropdown-background);
+}
+
+.border-dropdown {
+  border-color: var(--dropdown-border);
+}
+
+.hover-bg-theme:hover {
+  background-color: var(--hover-background);
+}
+
+/* Theme-aware component styles */
+body.theme-dark input,
+body.theme-dark textarea {
+  background-color: var(--input-background);
+  color: var(--input-foreground);
+  border-color: var(--input-border);
+}
+
+body.theme-dark .bg-white {
+  background-color: var(--card-background) !important;
+}
+
+body.theme-dark .text-black {
+  color: var(--card-foreground) !important;
+}
+
+body.theme-light input,
+body.theme-light textarea {
+  background-color: var(--input-background);
+  color: var(--input-foreground);
+  border-color: var(--input-border);
+}
+
+/* Additional dark mode overrides */
+body.theme-dark * {
+  border-color: var(--border);
+}
+
+body.theme-dark .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+body.theme-dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+body.theme-dark .shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure HTML has proper background only when dark class is applied */
+html.dark {
+  background-color: #111827;
+}
+
+/* Enhanced Calendar Days and Elements Purplish Styling */
+
+/* Calendar day cells hover effects */
+body.theme-light td:hover {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.9), rgba(243, 232, 255, 0.7)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* Calendar day numbers styling */
+body.theme-light .text-xs.text-gray-700 {
+  color: #6b21a8 !important;
+  font-weight: 600;
+}
+
+/* Calendar note titles in cells */
+body.theme-light .text-xs.text-purple-800 {
+  color: #581c87 !important;
+  background: rgba(243, 232, 255, 0.7) !important;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  margin-bottom: 0.125rem;
+  backdrop-filter: blur(4px);
+}
+
+/* Calendar header buttons consistent purplish - no border */
+body.theme-light .px-3.py-1.rounded.bg-purple-100 {
+  background: rgba(243, 232, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+  border: none !important;
+}
+
+body.theme-light .px-3.py-1.rounded.bg-purple-100:hover {
+  background: rgba(233, 213, 255, 0.9) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Calendar dropdown menus consistent purplish - no border */
+body.theme-light .absolute.left-0.top-full {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
+  border: none !important;
+}
+
+/* Calendar dropdown items */
+body.theme-light .absolute.left-0.top-full > div {
+  color: #6b21a8 !important;
+  transition: all 0.2s ease;
+}
+
+body.theme-light .absolute.left-0.top-full > div:hover {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(243, 232, 255, 0.7)) !important;
+  transform: scale(1.02);
+  color: #581c87 !important;
+}
+
+/* Calendar month/year title */
+body.theme-light .text-2xl.font-bold.text-purple-900 {
+  color: #581c87 !important;
+  text-shadow: 0 2px 4px rgba(124, 58, 237, 0.15);
+}
+
+/* Consistent purplish background for all calendar days - no borders */
+body.theme-light .w-28.h-20.border {
+  background: rgba(243, 232, 255, 0.7) !important;
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced hover effect for calendar days */
+body.theme-light .w-28.h-20.border:hover {
+  background: rgba(233, 213, 255, 0.8) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(124, 58, 237, 0.25);
+}
+
+/* Empty calendar cells also get consistent purplish background */
+body.theme-light .w-28.h-20.border.align-top {
+  background: rgba(243, 232, 255, 0.7) !important;
+  border: none !important;
+}
+
+/* Remove all remaining borders from calendar elements */
+body.theme-light table {
+  border: none !important;
+  border-collapse: separate !important;
+  border-spacing: 2px !important;
+}
+
+body.theme-light .border {
+  border: none !important;
+}
+
+body.theme-light .border-collapse {
+  border: none !important;
+}
+
+/* Enhanced Settings Section Styling for Light Mode */
+
+/* Settings title */
+body.theme-light .text-2xl.font-bold.text-purple-900 {
+  color: #581c87 !important;
+  text-shadow: 0 2px 4px rgba(124, 58, 237, 0.15);
+}
+
+/* Settings list items background */
+body.theme-light .bg-purple-50 {
+  background: rgba(243, 232, 255, 0.7) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
+  transition: all 0.3s ease;
+}
+
+body.theme-light .bg-purple-50:hover,
+body.theme-light .hover\:bg-purple-100:hover {
+  background: rgba(233, 213, 255, 0.8) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(124, 58, 237, 0.2);
+}
+
+/* Settings text color */
+body.theme-light .text-purple-800 {
+  color: #581c87 !important;
+}
+
+/* Theme selector labels */
+body.theme-light .theme-selector label {
+  color: #6b21a8 !important;
+  transition: all 0.2s ease;
+}
+
+body.theme-light .theme-selector label:hover {
+  color: #581c87 !important;
+  transform: scale(1.02);
+}
+
+/* Radio button accent color */
+body.theme-light .accent-purple-600 {
+  accent-color: #7c3aed !important;
+}
+
+/* Enhanced Settings Section Styling for Dark Mode */
+
+/* Settings title dark mode */
+body.theme-dark .text-2xl.font-bold.text-purple-300,
+body.dark .text-2xl.font-bold.text-purple-300 {
+  color: #c4b5fd !important;
+  text-shadow: 0 2px 4px rgba(196, 181, 253, 0.3);
+}
+
+/* Settings list items background dark mode */
+body.theme-dark .bg-purple-900,
+body.dark .bg-purple-900 {
+  background: rgba(88, 28, 135, 0.8) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(88, 28, 135, 0.3);
+  transition: all 0.3s ease;
+}
+
+body.theme-dark .bg-purple-900:hover,
+body.theme-dark .hover\:bg-purple-800:hover,
+body.dark .bg-purple-900:hover,
+body.dark .hover\:bg-purple-800:hover {
+  background: rgba(107, 33, 168, 0.9) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(107, 33, 168, 0.4);
+}
+
+/* Settings text color dark mode */
+body.theme-dark .text-purple-200,
+body.dark .text-purple-200 {
+  color: #ddd6fe !important;
+}
+
+/* Theme selector labels dark mode */
+body.theme-dark .theme-selector label,
+body.dark .theme-selector label {
+  color: #c4b5fd !important;
+  transition: all 0.2s ease;
+}
+
+body.theme-dark .theme-selector label:hover,
+body.dark .theme-selector label:hover {
+  color: #ddd6fe !important;
+  transform: scale(1.02);
+}
+
+/* Radio button accent color dark mode */
+body.theme-dark .accent-purple-600,
+body.dark .accent-purple-600 {
+  accent-color: #a78bfa !important;
 }
