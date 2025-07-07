@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo ,useRef,useCallback} from "react";
 import Sidebar from "../components/Sidebar";
 import CalendarWidget from "./CalendarWidget";
+import StudyGenie from "../components/StudyGenie";
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -533,6 +534,9 @@ useEffect(() => {
               </div>
             )}
           </div>
+        )}
+        {selectedMenu === "StudyGenie" && (
+          <StudyGenie />
         )}
         {selectedMenu === "Settings" && (
           <div className="w-full p-10">

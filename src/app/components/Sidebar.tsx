@@ -12,10 +12,17 @@ interface SidebarProps {
   setSelectedMenu: (menu: string) => void;
 }
 
-const menuItems = [
+interface MenuItem {
+  label: string;
+  icon: string;
+  isImage?: boolean;
+}
+
+const menuItems: MenuItem[] = [
   { label: "Dashboard", icon: "🏠" },
   { label: "Projects", icon: "📁" },
   { label: "Calendar", icon: "🗓️" },
+  { label: "StudyGenie", icon: "/genie.png", isImage: true },
   { label: "Settings", icon: "⚙️" },
 ];
 
@@ -78,7 +85,15 @@ export default function Sidebar({
                 }`}
                 onClick={() => setSelectedMenu(item.label)}
               >
-                <span className="text-xl">{item.icon}</span>
+                {item.isImage ? (
+                  <img 
+                    src={item.icon} 
+                    alt={item.label} 
+                    className="w-5 h-5" 
+                  />
+                ) : (
+                  <span className="text-xl">{item.icon}</span>
+                )}
                 {!sidebarCollapsed && <span>{item.label}</span>}
               </button>
             </li>

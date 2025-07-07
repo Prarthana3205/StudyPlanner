@@ -153,11 +153,11 @@ export default function CalendarWidget({
 
 			{/* Calendar Table */}
 			<div className="overflow-x-auto">
-				<table className="border-collapse bg-white/80 dark:bg-gray-800/90 rounded-xl shadow-xl">
+				<table className="border border-gray-200 dark:border-transparent border-collapse bg-white/80 dark:bg-gray-800/90 rounded-xl shadow-xl">
 					<thead>
 						<tr>
 							{dayLabels.map((label) => (
-								<th key={label} className="px-4 py-2 border text-purple-700 dark:text-purple-300 font-semibold text-center">
+								<th key={label} className="px-4 py-2 border border-gray-200 dark:border-transparent text-purple-700 dark:text-purple-300 font-semibold text-center">
 									{label}
 								</th>
 							))}
@@ -177,7 +177,7 @@ export default function CalendarWidget({
 									return (
 										<td
 											key={j}
-											className="w-28 h-20 border align-top relative cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900"
+											className="w-28 h-20 border border-gray-200 dark:border-transparent align-top relative cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900" 
 											onClick={() => day && onDaySelect?.(day, month, year)}
 										>
 											<div className="absolute top-1 left-2 text-xs text-gray-700 dark:text-gray-300 font-semibold">
