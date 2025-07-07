@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -91,7 +92,7 @@ export default function Login() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black"
+                className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -101,15 +102,28 @@ export default function Login() {
               <label className="block font-medium mb-1 text-purple-800" htmlFor="password">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="********"
-                className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  className="w-full border border-purple-300 rounded px-3 py-2 pr-10 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <img src="/close-eye.png" alt="Hide password" className="w-5 h-5" />
+                  ) : (
+                    <img src="/view.png" alt="Show password" className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 text-purple-600">
@@ -163,6 +177,10 @@ export default function Login() {
       </div>
       {/* Global CSS Animations */}
       <style jsx global>{`
+        input[type="text"], input[type="email"], input[type="password"] {
+          background-color: #f3f4f6 !important;
+          color: #374151 !important;
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px);}
           50% { transform: translateY(-30px);}

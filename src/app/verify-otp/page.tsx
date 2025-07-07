@@ -106,7 +106,7 @@ export default function VerifyOtp() {
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
-                className="w-10 h-12 text-center border border-purple-300 rounded text-xl focus:outline-none focus:border-purple-600 bg-white text-black"
+                className="w-10 h-12 text-center border border-purple-300 rounded text-xl focus:outline-none focus:border-purple-600 !bg-purple-50 text-gray-800"
                 value={digit}
                 onChange={e => handleChange(e, idx)}
                 onKeyDown={e => handleKeyDown(e, idx)}
@@ -135,6 +135,14 @@ export default function VerifyOtp() {
           </button>
         </div>
       </div>
+      
+      {/* Global CSS for input styling */}
+      <style jsx global>{`
+        input[type="text"], input[type="email"], input[type="password"] {
+          background-color: #f3f4f6 !important;
+          color: #374151 !important;
+        }
+      `}</style>
     </div>
   );
 }

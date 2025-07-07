@@ -47,7 +47,7 @@ export default function ForgotPassword() {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black"
+              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -64,6 +64,14 @@ export default function ForgotPassword() {
           </button>
         </form>
       </div>
+      
+      {/* Global CSS for input styling */}
+      <style jsx global>{`
+        input[type="text"], input[type="email"], input[type="password"] {
+          background-color: #f3f4f6 !important;
+          color: #374151 !important;
+        }
+      `}</style>
     </div>
   );
 }

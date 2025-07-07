@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,29 +59,55 @@ export default function ResetPassword() {
             <label className="block font-medium mb-1 text-purple-800" htmlFor="password">
               New Password
             </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="New password"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black"
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="New password"
+                className="w-full border border-purple-300 rounded px-3 py-2 pr-10 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 focus:outline-none"
+              >
+                {showPassword ? (
+                  <img src="/close-eye.png" alt="Hide password" className="w-5 h-5" />
+                ) : (
+                  <img src="/view.png" alt="Show password" className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block font-medium mb-1 text-purple-800" htmlFor="confirm">
               Confirm Password
             </label>
-            <input
-              id="confirm"
-              type="password"
-              placeholder="Confirm password"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black"
-              required
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                id="confirm"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm password"
+                className="w-full border border-purple-300 rounded px-3 py-2 pr-10 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
+                required
+                value={confirm}
+                onChange={e => setConfirm(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 focus:outline-none"
+              >
+                {showConfirmPassword ? (
+                  <img src="/close-eye.png" alt="Hide password" className="w-5 h-5" />
+                ) : (
+                  <img src="/view.png" alt="Show password" className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
           {error && <div className="text-red-600 text-sm">{error}</div>}
           {success && <div className="text-green-600 text-sm">{success}</div>}
@@ -92,6 +120,14 @@ export default function ResetPassword() {
           </button>
         </form>
       </div>
+      
+      {/* Global CSS for input styling */}
+      <style jsx global>{`
+        input[type="text"], input[type="email"], input[type="password"] {
+          background-color: #f3f4f6 !important;
+          color: #374151 !important;
+        }
+      `}</style>
     </div>
   );
 }

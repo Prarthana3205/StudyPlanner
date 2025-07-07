@@ -8,6 +8,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -95,7 +96,7 @@ export default function Register() {
       </svg>
 
       {/* Centered Registration Form */}
-      <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl px-12 py-10 flex flex-col justify-center">
+      <div className="relative z-10 w-full max-w-md bg-purple-50 rounded-2xl shadow-xl px-12 py-10 flex flex-col justify-center">
         {/* Logo */}
         <div className="mb-8 text-center">
           <span className="font-serif text-2xl font-bold text-purple-800">SAP</span>
@@ -115,7 +116,7 @@ export default function Register() {
               id="name"
               type="text"
               placeholder="Enter your name"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black bg-white/80"
+              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
               required
               value={name}
               onChange={e => setName(e.target.value)}
@@ -128,7 +129,7 @@ export default function Register() {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black bg-white/80"
+              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -137,18 +138,31 @@ export default function Register() {
 
           <div>
             <label htmlFor="password" className="block font-medium mb-1 text-purple-800">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="********"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-black bg-white/80"
-              required
-              value={password}
-              onChange={e => {
-                setPassword(e.target.value);
-                setPasswordStrength(getPasswordStrength(e.target.value));
-              }}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="********"
+                className="w-full border border-purple-300 rounded px-3 py-2 pr-10 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
+                required
+                value={password}
+                onChange={e => {
+                  setPassword(e.target.value);
+                  setPasswordStrength(getPasswordStrength(e.target.value));
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 focus:outline-none"
+              >
+                {showPassword ? (
+                  <img src="/close-eye.png" alt="Hide password" className="w-5 h-5" />
+                ) : (
+                  <img src="/view.png" alt="Show password" className="w-5 h-5" />
+                )}
+              </button>
+            </div>
             {password && (
               <div
                 className={`text-sm mt-1 ${
@@ -185,6 +199,10 @@ export default function Register() {
 
       {/* Global CSS Animations */}
       <style jsx global>{`
+        input[type="text"], input[type="email"], input[type="password"] {
+          background-color: #f3f4f6 !important;
+          color: #374151 !important;
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px);}
           50% { transform: translateY(-30px);}
