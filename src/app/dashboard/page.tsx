@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo ,useRef,useCallback} from "react";
 import Sidebar from "../components/Sidebar";
 import CalendarWidget from "./CalendarWidget";
+import TodoWidget from "./TodoWidget";
 import StudyGenie from "../components/StudyGenie";
+import PomodoroTimer from "../components/PomodoroTimer";
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -14,23 +16,170 @@ const monthNames = [
 
 // Example dashboard content component
 function DashboardContent() {
+  const [todoStats, setTodoStats] = useState({ total: 0, completed: 0 });
+  const [calendarStats, setCalendarStats] = useState({ events: 0 });
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Dynamic greeting and motivational messages
+  const getGreetingAndMessage = () => {
+    const hour = new Date().getHours();
+    let greeting = "";
+    
+    if (hour < 12) {
+      greeting = "Good Morning";
+    } else if (hour < 17) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+
+    const motivationalMessages = [
+      "Study Smart, Score Big! 🚀",
+      "Learn Faster, Retain Longer! 🧠",
+      "Your Shortcut to Acing Exams! 📚",
+      "Transform Knowledge into Success! ⭐",
+      "Every Study Session Counts! 💪",
+      "Focus Now, Celebrate Later! 🎉",
+      "Turn Goals into Grades! 🎯",
+      "Study Hard, Dream Big! ✨"
+    ];
+
+    // Generate a consistent random index based on the day (so it changes daily)
+    const today = new Date().toDateString();
+    const messageIndex = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % motivationalMessages.length;
+    
+    return {
+      greeting,
+      message: motivationalMessages[messageIndex]
+    };
+  };
+
+  const { greeting, message } = getGreetingAndMessage();
+
+  const fetchTodoStats = async () => {
+    try {
+      const response = await fetch("/api/todos", { credentials: "include" });
+      if (response.ok) {
+        const data = await response.json();
+        const todos = data.todos || [];
+        setTodoStats({
+          total: todos.length,
+          completed: todos.filter((t: any) => t.completed).length,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching todo stats:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodoStats();
+    
+    // Update time every second
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timeInterval);
+  }, []);
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-purple-900 dark:text-purple-300 mb-6">
-        Welcome to your Dashboard
-      </h1>
-      {/* ...add your dashboard widgets, stats, to-do, etc. here... */}
-      <p className="text-purple-700 dark:text-purple-300">
-        This is your main dashboard area. Add your widgets and content here.
-      </p>
+    <div className="space-y-8">
+      {/* Centered Greeting Section with Time */}
+      <div className="relative flex items-center justify-center">
+        {/* Time Display on the Left */}
+        <div className="absolute left-0 flex flex-col items-start">
+          <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+            {currentTime.toLocaleDateString('en-US', { 
+              weekday: 'long',
+              month: 'short', 
+              day: 'numeric',
+              year: 'numeric'
+            })}
+          </div>
+          <div className="text-2xl font-bold text-purple-900 dark:text-purple-300">
+            {currentTime.toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit'
+            })}
+          </div>
+        </div>
+        
+        {/* Centered Greeting */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-purple-900 dark:text-purple-300 mb-4">
+            {greeting}! 👋
+          </h1>
+          <p className="text-purple-700 dark:text-purple-300 text-lg font-medium">
+            {message}
+          </p>
+        </div>
+      </div>
+      
+      {/* Dashboard Widgets Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Todo Widget */}
+        <div className="lg:col-span-1">
+          <TodoWidget onStatsUpdate={fetchTodoStats} />
+        </div>
+        
+        {/* Right Column with Progress Bar and Pomodoro Timer */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Progress Bar Widget */}
+          <div className="bg-white/90 dark:bg-gray-800/90 rounded-xl shadow-2xl p-6 border-2 border-purple-300 dark:border-purple-500">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-purple-900 dark:text-purple-100">
+                📈 Progress
+              </h2>
+              <span className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+                {todoStats.completed}/{todoStats.total} tasks
+              </span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-purple-900 dark:text-purple-100 font-medium">Completion Rate</span>
+                <span className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                  {todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%
+                </span>
+              </div>
+              
+              {/* Animated Progress Bar */}
+              <div className="w-full bg-purple-200 dark:bg-purple-700 rounded-full h-4 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full transition-all duration-1000 ease-out relative"
+                  style={{ 
+                    width: `${todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%` 
+                  }}
+                >
+                  {/* Animated shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                </div>
+              </div>
+              
+              {/* Progress Labels */}
+              <div className="flex justify-between text-xs text-purple-600 dark:text-purple-400">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Pomodoro Timer */}
+          <PomodoroTimer />
+        </div>
+      </div>
     </div>
   );
 }
 
 const menuItems = [
   { label: "Dashboard", icon: "🏠", href: "/dashboard" },
-  { label: "Projects", icon: "📁", href: "#" },
+  { label: "Todos", icon: "✅", href: "#" },
   { label: "Calendar", icon: "🗓️", href: "#" },
+  { label: "Projects", icon: "📁", href: "#" },
   { label: "Settings", icon: "⚙️", href: "#" },
 ];
 
@@ -508,6 +657,21 @@ useEffect(() => {
         {selectedMenu === "Dashboard" && (
           <div className="w-full p-10">
             <DashboardContent />
+          </div>
+        )}
+        {selectedMenu === "Todos" && (
+          <div className="w-full p-10">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-purple-900 dark:text-purple-300 mb-4">
+                  My Todo List
+                </h1>
+                <p className="text-purple-700 dark:text-purple-300">
+                  Manage your tasks and stay productive.
+                </p>
+              </div>
+              <TodoWidget />
+            </div>
           </div>
         )}
         {selectedMenu === "Calendar" && (

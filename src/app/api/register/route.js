@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "practice";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(request) {
   try {
@@ -27,10 +29,32 @@ export async function POST(request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await users.insertOne({ name, email, password: hashedPassword });
+    const result = await users.insertOne({ name, email, password: hashedPassword });
+
+    // Create JWT token for automatic login
+    const token = jwt.sign(
+      { email: email, userId: result.insertedId.toString() },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     await client.close();
-    return NextResponse.json({ success: true }, { status: 201 });
+
+    // Create response with authentication cookie
+    const response = NextResponse.json({ 
+      success: true, 
+      user: { name, email }
+    }, { status: 201 });
+
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return response;
   } catch (err) {
     console.error("Registration Error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

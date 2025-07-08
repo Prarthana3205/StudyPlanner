@@ -110,7 +110,7 @@ export default function Home() {
             In an era of digital overload, managing tasks effectively is critical for personal productivity and mental clarity.
           </p>
           <p className="text-lg text-purple-800 text-center mb-2">
-            <span className="font-semibold text-purple-700"></span> Stay productive and learn smarter with <span className="font-bold bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">SAP To-Do + Study Partner</span> — a powerful web application that helps you manage tasks and study more effectively.
+            <span className="font-semibold text-purple-700"></span> Stay productive and learn smarter with <span className="font-bold bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">SAP To-Do + StudyGenie</span> — a powerful web application that helps you manage tasks and study more effectively.
           </p>
           <ul className="text-purple-700 text-base list-disc list-inside mb-2 mt-4 space-y-1 text-left w-full max-w-md mx-auto">
             <li>Plan your day with a beautiful, responsive to-do list.</li>
@@ -127,7 +127,7 @@ export default function Home() {
       >
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-300 rounded-full blur-2xl opacity-40 animate-float-fast pointer-events-none" />
         <h2 className="text-3xl md:text-4xl font-extrabold text-purple-900 mb-6 text-center drop-shadow-lg">
-          <span className="bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">Study Partner</span>
+          <span className="bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">StudyGenie</span>
         </h2>
         <p className="text-lg text-purple-800 mb-10 text-center max-w-2xl">
           Upload your study materials (PDFs, documents, notes) and let AI help you learn smarter.<br />
