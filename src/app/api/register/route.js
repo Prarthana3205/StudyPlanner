@@ -21,6 +21,7 @@ export async function POST(request) {
 
     const db = client.db(dbName);
     const users = db.collection("users");
+    const emailVerifications = db.collection("email_verifications");
 
     const existing = await users.findOne({ email });
     if (existing) {
@@ -28,8 +29,29 @@ export async function POST(request) {
       return NextResponse.json({ error: "User already exists" }, { status: 409 });
     }
 
+    // Check if email was verified
+    const verification = await emailVerifications.findOne({ 
+      email, 
+      isVerified: true 
+    });
+    
+    if (!verification) {
+      await client.close();
+      return NextResponse.json({ 
+        error: "Email must be verified before registration" 
+      }, { status: 400 });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await users.insertOne({ name, email, password: hashedPassword });
+    const result = await users.insertOne({ 
+      name, 
+      email, 
+      password: hashedPassword,
+      isEmailVerified: true
+    });
+
+    // Clean up verification record
+    await emailVerifications.deleteOne({ email });
 
     // Create JWT token for automatic login
     const token = jwt.sign(

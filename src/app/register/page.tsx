@@ -13,6 +13,9 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [passwordStrength, setPasswordStrength] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [verifyingEmail, setVerifyingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const router = useRouter();
 
@@ -27,17 +30,91 @@ export default function Register() {
     return "Weak";
   };
 
-  const validate = () => {
+  const checkEmailVerification = async () => {
+    if (!email) return;
+    
+    try {
+      const res = await fetch("/api/check-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.isVerified) {
+        setEmailVerified(true);
+        setEmailSent(false);
+        setSuccess("Email verified successfully!");
+      }
+    } catch (err) {
+      // Silently handle error - user might not have started verification yet
+    }
+  };
+
+  const isFormValid = () => {
+    return name.trim().length > 0 && 
+           validateEmailFormat(email) && 
+           password.length >= 8;
+  };
+
+  const canSubmit = () => {
+    return isFormValid() && emailVerified;
+  };
+
+  const getSubmitMessage = () => {
+    if (!emailVerified) {
+      return "Please verify your email address first";
+    }
+    return "";
+  };
+
+  const handleEmailVerification = async () => {
+    if (!isFormValid()) {
+      setError("Please fill in all fields correctly before verifying email.");
+      return;
+    }
+
     if (!validateEmailFormat(email)) {
-      setError("Please enter a valid email address.");
-      return false;
+      setError("Please enter a valid email address before verifying.");
+      return;
     }
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long.");
-      return false;
+
+    setVerifyingEmail(true);
+    setError("");
+    
+    try {
+      const res = await fetch("/api/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Email verification failed");
+
+      setEmailSent(true);
+      setSuccess("Verification email sent! Please check your inbox and click the verification link.");
+      
+      // Start polling for verification status
+      const pollInterval = setInterval(() => {
+        checkEmailVerification();
+      }, 3000); // Check every 3 seconds
+
+      // Stop polling after 10 minutes
+      setTimeout(() => {
+        clearInterval(pollInterval);
+      }, 600000);
+      
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setVerifyingEmail(false);
     }
-    if (name.trim().length === 0) {
-      setError("Name is required.");
+  };
+
+  const validate = () => {
+    if (!canSubmit()) {
+      setError(getSubmitMessage());
       return false;
     }
     return true;
@@ -119,21 +196,53 @@ export default function Register() {
               className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
               required
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={e => {
+                setName(e.target.value);
+                setEmailVerified(false);
+                setEmailSent(false);
+              }}
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block font-medium mb-1 text-purple-800">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              className="w-full border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
-              required
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
+            <div className="flex gap-2">
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 border border-purple-300 rounded px-3 py-2 focus:outline-none focus:border-purple-600 text-gray-800 !bg-purple-50"
+                required
+                value={email}
+                onChange={e => {
+                  setEmail(e.target.value);
+                  setEmailVerified(false);
+                  setEmailSent(false);
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleEmailVerification}
+                disabled={verifyingEmail || !isFormValid() || emailVerified || emailSent}
+                className={`px-4 py-2 rounded font-medium text-sm transition ${
+                  emailVerified
+                    ? "bg-green-600 text-white cursor-not-allowed"
+                    : emailSent
+                    ? "bg-blue-600 text-white cursor-not-allowed"
+                    : verifyingEmail || !isFormValid()
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
+              >
+                {emailVerified 
+                  ? "✓ Verified" 
+                  : emailSent 
+                  ? "Email Sent" 
+                  : verifyingEmail 
+                  ? "Verifying..." 
+                  : "Verify"}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -149,6 +258,8 @@ export default function Register() {
                 onChange={e => {
                   setPassword(e.target.value);
                   setPasswordStrength(getPasswordStrength(e.target.value));
+                  setEmailVerified(false);
+                  setEmailSent(false);
                 }}
               />
               <button
