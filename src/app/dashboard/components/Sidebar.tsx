@@ -20,7 +20,6 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { label: "Dashboard", icon: "🏠" },
-  { label: "Projects", icon: "📁" },
   { label: "Calendar", icon: "🗓️" },
   { label: "StudyGenie", icon: "/genie.png", isImage: true },
   { label: "Settings", icon: "⚙️" },
@@ -38,8 +37,27 @@ export default function Sidebar({
   // Use fallback if user.name is not available yet
   const displayName = user?.name || "";
 
-  const handleLogout = () => {
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      // Call the logout API to clear the token cookie
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', // Include cookies in the request
+      });
+      
+      if (response.ok) {
+        // Redirect to login page after successful logout
+        router.push("/login");
+      } else {
+        console.error('Logout failed');
+        // Still redirect even if API call fails
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still redirect even if there's an error
+      router.push("/login");
+    }
   };
 
   return (

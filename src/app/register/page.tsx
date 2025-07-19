@@ -176,7 +176,7 @@ export default function Register() {
       <div className="relative z-10 w-full max-w-md bg-purple-50 rounded-2xl shadow-xl px-12 py-10 flex flex-col justify-center">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <span className="font-serif text-2xl font-bold text-purple-800">SAP</span>
+          <span className="font-serif text-2xl font-bold text-purple-800">StudyPlanner</span>
         </div>
         {/* Welcome */}
         <h2 className="text-3xl font-serif font-semibold mb-2 text-purple-900 text-center">

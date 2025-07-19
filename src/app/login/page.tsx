@@ -75,7 +75,7 @@ export default function Login() {
         <div className="w-1/2 flex flex-col justify-center px-12 py-10">
           {/* Logo */}
           <div className="mb-8">
-            <span className="font-serif text-2xl font-bold text-purple-800">SAP</span>
+            <span className="font-serif text-2xl font-bold text-purple-800">StudyPlanner</span>
           </div>
           {/* Welcome */}
           <h2 className="text-3xl font-serif font-semibold mb-2 text-purple-800">Welcome back !</h2>

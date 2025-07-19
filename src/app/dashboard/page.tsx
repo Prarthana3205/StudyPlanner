@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo ,useRef,useCallback} from "react";
-import Sidebar from "../components/Sidebar";
-import CalendarWidget from "./CalendarWidget";
-import TodoWidget from "./TodoWidget";
-import StudyGenie from "../components/StudyGenie";
-import PomodoroTimer from "../components/PomodoroTimer";
+import Sidebar from "./components/Sidebar";
+import CalendarWidget from "./components/CalendarWidget";
+import TodoWidget from "./components/TodoWidget";
+import StudyGenie from "./components/StudyGenie";
+import PomodoroTimer from "./components/PomodoroTimer";
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",

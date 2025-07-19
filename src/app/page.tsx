@@ -59,25 +59,25 @@ export default function Home() {
       </svg>
 
       {/* Top right login/register */}
-      <div className="absolute top-6 right-8 flex gap-4 z-10">
+      <div className="fixed top-6 right-8 flex gap-4 z-50 pointer-events-auto">
         <Link
           href="/login"
-          className="bg-purple-600 text-white px-5 py-2 rounded font-semibold shadow hover:bg-purple-800 transition-all duration-300 transform hover:scale-105"
+          className="bg-purple-600 text-white px-5 py-2 rounded font-semibold shadow hover:bg-purple-800 transition-all duration-300 transform hover:scale-105 cursor-pointer relative z-50 pointer-events-auto"
         >
           Login
         </Link>
         <Link
           href="/register"
-          className="bg-white text-purple-700 border border-purple-600 px-5 py-2 rounded font-semibold shadow hover:bg-purple-100 transition-all duration-300 transform hover:scale-105"
+          className="bg-white text-purple-700 border border-purple-600 px-5 py-2 rounded font-semibold shadow hover:bg-purple-100 transition-all duration-300 transform hover:scale-105 cursor-pointer relative z-50 pointer-events-auto"
         >
           Register
         </Link>
       </div>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center relative z-10 snap-start">
+      <section className="min-h-screen flex flex-col items-center justify-center relative z-10 snap-start pt-20">
         <span className="font-serif text-4xl md:text-6xl font-bold text-purple-800 mb-4 tracking-wide drop-shadow-lg">
-          SAP To-Do
+          StudyPlanner
         </span>
         <h1 className="text-4xl md:text-5xl font-extrabold text-purple-900 mb-4 text-center leading-tight drop-shadow">
           Make Every Day <span className="text-yellow-400">Productive</span>
@@ -104,13 +104,13 @@ export default function Home() {
         <div className="absolute bottom-0 left-1/4 w-20 h-20 bg-purple-200 rounded-full blur-2xl opacity-30 animate-float-slow pointer-events-none" />
         <div className="max-w-2xl w-full bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-10 flex flex-col items-center animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-extrabold text-purple-900 mb-4 text-center drop-shadow-lg">
-            <span className="bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">Why SAP To-Do?</span>
+            <span className="bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">Why StudyPlanner?</span>
           </h2>
           <p className="text-lg text-purple-800 text-center mb-2">
             In an era of digital overload, managing tasks effectively is critical for personal productivity and mental clarity.
           </p>
           <p className="text-lg text-purple-800 text-center mb-2">
-            <span className="font-semibold text-purple-700"></span> Stay productive and learn smarter with <span className="font-bold bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">SAP To-Do + StudyGenie</span> — a powerful web application that helps you manage tasks and study more effectively.
+            <span className="font-semibold text-purple-700"></span> Stay productive and learn smarter with <span className="font-bold bg-gradient-to-r from-purple-600 to-yellow-400 bg-clip-text text-transparent">StudyPlanner + StudyGenie</span> — a powerful web application that helps you manage tasks and study more effectively.
           </p>
           <ul className="text-purple-700 text-base list-disc list-inside mb-2 mt-4 space-y-1 text-left w-full max-w-md mx-auto">
             <li>Plan your day with a beautiful, responsive to-do list.</li>
@@ -139,10 +139,9 @@ export default function Home() {
             <div className="bg-yellow-200 rounded-full w-16 h-16 flex items-center justify-center mb-4 text-3xl group-hover:rotate-12 transition-transform">📄</div>
             <h3 className="text-xl font-bold text-purple-800 mb-2">Add PDF/Document</h3>
             <p className="text-purple-700 mb-4 text-center">Upload your notes, textbooks, or slides. Supported: PDF, DOCX, TXT.</p>
-            <label className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-purple-800 cursor-pointer transition-all">
+            <button className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-purple-800 cursor-pointer transition-all">
               Upload File
-              <input type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" />
-            </label>
+            </button>
           </div>
           {/* Summary Card */}
           <div className="flex-1 bg-white/90 rounded-2xl shadow-xl p-8 flex flex-col items-center group hover:scale-105 hover:shadow-2xl transition-all duration-300 animate-fade-in delay-100">
@@ -180,7 +179,7 @@ export default function Home() {
         <div className="max-w-xl w-full bg-white/80 rounded-2xl shadow-xl p-10 flex flex-col items-center">
           <h4 className="text-2xl font-bold text-purple-800 mb-4 text-center">Ready to get started?</h4>
           <p className="text-lg text-purple-900 mb-6 text-center">
-            Log in to start organizing your day with SAP To-Do!
+            Log in to start organizing your day with StudyPlanner!
           </p>
           <Link
             href="/login"

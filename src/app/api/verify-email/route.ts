@@ -58,19 +58,22 @@ export async function POST(request: Request) {
     await sendMail({
       to: email,
       subject: "Verify Your Email - DayDo",
-      text: `
-Hello,
+      text: `Email Verification Required
 
-Thank you for your interest in DayDo! Please verify your email address by clicking the link below:
-
+Please verify your email address by clicking the link below:
 ${verificationLink}
 
 This link will expire in 24 hours.
 
-If you didn't request this verification, please ignore this email.
-
-Best regards,
-DayDo Team
+If you didn't request this verification, please ignore this email.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <p><strong>Email Verification Required</strong></p>
+          <p>Please verify your email address by clicking the link below:</p>
+          <p><a href="${verificationLink}" style="color: #007bff; text-decoration: underline;">${verificationLink}</a></p>
+          <p>This link will expire in 24 hours.</p>
+          <p>If you didn't request this verification, please ignore this email.</p>
+        </div>
       `
     });
 

@@ -1,27 +1,53 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI!;
 const dbName = process.env.MONGODB_DB || "practice";
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET!;
 
-export async function POST(request) {
+interface RegisterRequestBody {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface User {
+  _id?: any;
+  name: string;
+  email: string;
+  password: string;
+  isEmailVerified: boolean;
+}
+
+interface EmailVerification {
+  email: string;
+  isVerified: boolean;
+  verificationToken?: string;
+  verificationExpires?: Date;
+}
+
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body: RegisterRequestBody = await request.json();
     const { name, email, password } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
+    if (!uri || !JWT_SECRET) {
+      console.error("Missing required environment variables");
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
     const client = new MongoClient(uri);
     await client.connect();
 
     const db = client.db(dbName);
-    const users = db.collection("users");
-    const emailVerifications = db.collection("email_verifications");
+    const users = db.collection<User>("users");
+    const emailVerifications = db.collection<EmailVerification>("email_verifications");
 
     const existing = await users.findOne({ email });
     if (existing) {
@@ -77,8 +103,11 @@ export async function POST(request) {
     });
 
     return response;
-  } catch (err) {
+  } catch (err: any) {
     console.error("Registration Error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Server error",
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    }, { status: 500 });
   }
 }

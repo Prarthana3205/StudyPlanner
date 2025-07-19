@@ -1,22 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function EmailVerification() {
+function EmailVerificationContent() {
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const [mounted, setMounted] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const verifyEmail = async () => {
       const token = searchParams.get('token');
       const email = searchParams.get('email');
 
       if (!token || !email) {
         setVerificationStatus('error');
-        setMessage('Invalid verification link');
+        setMessage('Invalid verification link - missing token or email');
         return;
       }
 
@@ -45,7 +52,7 @@ export default function EmailVerification() {
     };
 
     verifyEmail();
-  }, [searchParams]);
+  }, [searchParams, mounted]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-yellow-50 relative overflow-hidden">
@@ -73,7 +80,7 @@ export default function EmailVerification() {
       <div className="relative z-10 w-full max-w-md bg-purple-50 rounded-2xl shadow-xl px-12 py-10 flex flex-col justify-center text-center">
         {/* Logo */}
         <div className="mb-8">
-          <span className="font-serif text-2xl font-bold text-purple-800">SAP</span>
+          <span className="font-serif text-2xl font-bold text-purple-800">StudyPlanner</span>
         </div>
 
         {/* Verification Status */}
@@ -147,5 +154,34 @@ export default function EmailVerification() {
         .animate-float-fast { animation: float-fast 5s ease-in-out infinite; }
       `}</style>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-yellow-50">
+      <div className="relative z-10 w-full max-w-md bg-purple-50 rounded-2xl shadow-xl px-12 py-10 flex flex-col justify-center text-center">
+        <div className="mb-8">
+          <span className="font-serif text-2xl font-bold text-purple-800">StudyPlanner</span>
+        </div>
+        <div className="mb-6">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+        </div>
+        <h2 className="text-2xl font-serif font-semibold mb-2 text-purple-900">
+          Loading...
+        </h2>
+        <p className="text-purple-700">
+          Please wait while we load the verification page.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function EmailVerification() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <EmailVerificationContent />
+    </Suspense>
   );
 }

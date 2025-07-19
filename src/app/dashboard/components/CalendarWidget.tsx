@@ -79,7 +79,7 @@ export default function CalendarWidget({
 						onMouseLeave={() => setShowMonthMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-yellow-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
+							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-purple-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
 							type="button"
 						>
 							{monthNames[month]} ▼
@@ -114,7 +114,7 @@ export default function CalendarWidget({
 						onMouseLeave={() => setShowYearMenu(false)}
 					>
 						<button
-							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-yellow-200 dark:bg-yellow-800 dark:text-yellow-200 dark:hover:bg-yellow-700"
+							className="px-2 py-1 rounded bg-purple-100 text-purple-800 font-bold hover:bg-purple-200 dark:bg-purple-800 dark:text-purple-200 dark:hover:bg-purple-700"
 							type="button"
 						>
 							{year} ▼
@@ -128,7 +128,7 @@ export default function CalendarWidget({
 									<div
 										key={y}
 										className={`px-4 py-2 cursor-pointer hover:bg-purple-100 dark:hover:bg-gray-700 text-center ${
-											y === year ? "bg-yellow-100 dark:bg-yellow-800 font-bold" : ""
+											y === year ? "bg-purple-100 dark:bg-purple-800 font-bold" : ""
 										}`}
 										onClick={() => {
 											setYear(y);
@@ -177,7 +177,7 @@ export default function CalendarWidget({
 									return (
 										<td
 											key={j}
-											className="w-28 h-20 border border-gray-200 dark:border-transparent align-top relative cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900" 
+											className="w-28 h-20 border border-gray-200 dark:border-transparent align-top relative cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900" 
 											onClick={() => day && onDaySelect?.(day, month, year)}
 										>
 											<div className="absolute top-1 left-2 text-xs text-gray-700 dark:text-gray-300 font-semibold">

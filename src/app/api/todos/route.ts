@@ -144,7 +144,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// DELETE - Delete todo
+// DELETE - Delete todo or clear all todos
 export async function DELETE(req: NextRequest) {
   const userId = await getUserId(req);
 
@@ -156,27 +156,42 @@ export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const todoId = searchParams.get("id");
-
-    if (!todoId) {
-      return NextResponse.json({ error: "Todo ID is required" }, { status: 400 });
-    }
+    const clearAll = searchParams.get("clearAll");
 
     client = await MongoClient.connect(MONGODB_URI);
     const db = client.db();
 
-    const result = await db.collection("todos").deleteOne({
-      _id: new ObjectId(todoId),
-      userId: userId.toString(),
-    });
+    if (clearAll === "true") {
+      // Clear all todos for the user
+      const result = await db.collection("todos").deleteMany({
+        userId: userId.toString(),
+      });
 
-    if (result.deletedCount === 0) {
-      return NextResponse.json({ error: "Todo not found" }, { status: 404 });
+      return NextResponse.json({ 
+        success: true, 
+        deletedCount: result.deletedCount,
+        message: `Cleared ${result.deletedCount} tasks` 
+      });
+    } else {
+      // Delete single todo
+      if (!todoId) {
+        return NextResponse.json({ error: "Todo ID is required" }, { status: 400 });
+      }
+
+      const result = await db.collection("todos").deleteOne({
+        _id: new ObjectId(todoId),
+        userId: userId.toString(),
+      });
+
+      if (result.deletedCount === 0) {
+        return NextResponse.json({ error: "Todo not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({ success: true });
     }
-
-    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting todo:", error);
-    return NextResponse.json({ error: "Failed to delete todo" }, { status: 500 });
+    console.error("Error deleting todo(s):", error);
+    return NextResponse.json({ error: "Failed to delete todo(s)" }, { status: 500 });
   } finally {
     if (client) await client.close();
   }

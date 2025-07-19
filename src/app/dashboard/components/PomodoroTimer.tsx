@@ -13,7 +13,6 @@ export default function PomodoroTimer({ className = "" }: PomodoroTimerProps) {
   const [customHours, setCustomHours] = useState(0);
   const [customMinutes, setCustomMinutes] = useState(25);
   const [customSeconds, setCustomSeconds] = useState(0);
-  const [isCustomizing, setIsCustomizing] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationInterval, setNotificationInterval] = useState<NodeJS.Timeout | null>(null);
   const [isSilenced, setIsSilenced] = useState(false);
@@ -158,14 +157,12 @@ export default function PomodoroTimer({ className = "" }: PomodoroTimerProps) {
     }
   }, []);
 
-  const setCustomTime = useCallback(() => {
-    const totalSeconds = customHours * 3600 + customMinutes * 60 + customSeconds;
-    if (totalSeconds > 0 && totalSeconds <= 86400) { // Max 24 hours
+  const updateTimeAndTimer = useCallback((hours: number, minutes: number, seconds: number) => {
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    if (totalSeconds >= 0 && totalSeconds <= 86400) {
       setTimeLeft(totalSeconds);
-      setIsCustomizing(false);
-      resetTimer();
     }
-  }, [customHours, customMinutes, customSeconds, resetTimer]);
+  }, []);
 
   // Initialize timer with custom time on component mount
   useEffect(() => {
@@ -194,155 +191,154 @@ export default function PomodoroTimer({ className = "" }: PomodoroTimerProps) {
     };
   }, [notificationInterval]);
 
+
+
   return (
-    <div className={`bg-white/90 dark:bg-gray-800/90 rounded-xl shadow-2xl p-6 border-2 border-purple-300 dark:border-purple-500 h-fit ${className}`}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-purple-900 dark:text-purple-100 text-center w-full">
-          Online Timer & Stopwatch
+    <div className={`bg-white/90 dark:bg-gray-800/90 rounded-xl shadow-2xl p-4 border-2 border-purple-300 dark:border-purple-500 h-fit ${className}`}>
+      <div className="flex items-center justify-center mb-4">
+        <h2 className="text-base font-bold text-purple-900 dark:text-purple-100 text-center">
+          Timer
         </h2>
-        <button
-          onClick={() => setIsCustomizing(!isCustomizing)}
-          className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 text-sm font-medium absolute top-4 right-4"
-          title="Customize timer"
-        >
-          ⚙️
-        </button>
       </div>
 
-      {isCustomizing && (
-        <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-800/30 rounded-lg border border-purple-200 dark:border-purple-600">
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            <div>
-              <label className="text-purple-900 dark:text-purple-100 font-medium text-xs block mb-1">
-                Hours:
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="23"
-                value={customHours}
-                onChange={(e) => setCustomHours(parseInt(e.target.value) || 0)}
-                className="w-full px-2 py-1 border border-purple-300 dark:border-purple-600 rounded text-center text-purple-900 dark:text-purple-100 dark:bg-gray-700 text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-purple-900 dark:text-purple-100 font-medium text-xs block mb-1">
-                Minutes:
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={customMinutes}
-                onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 0)}
-                className="w-full px-2 py-1 border border-purple-300 dark:border-purple-600 rounded text-center text-purple-900 dark:text-purple-100 dark:bg-gray-700 text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-purple-900 dark:text-purple-100 font-medium text-xs block mb-1">
-                Seconds:
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={customSeconds}
-                onChange={(e) => setCustomSeconds(parseInt(e.target.value) || 0)}
-                className="w-full px-2 py-1 border border-purple-300 dark:border-purple-600 rounded text-center text-purple-900 dark:text-purple-100 dark:bg-gray-700 text-sm"
-              />
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={setCustomTime}
-              className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-xs font-medium"
-            >
-              Apply
-            </button>
-            <button
-              onClick={() => {
-                setCustomHours(0);
-                setCustomMinutes(25);
-                setCustomSeconds(0);
-                setIsCustomizing(false);
-              }}
-              className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-xs font-medium"
-            >
-              Cancel
-            </button>
+      {/* Timer Display with Arrow Controls - Center */}
+      <div className="flex items-center justify-center gap-8 mb-6">
+        <div className="text-center">
+          <div className="flex items-center justify-center space-x-3 relative py-6">
+            {(() => {
+              const time = formatTimeDetailed(timeLeft);
+              return (
+                <>
+                  {/* Hours */}
+                  <div className="text-center relative flex flex-col items-center">
+                    {/* Up Arrow for Hours */}
+                    <button
+                      onClick={() => {
+                        const newHours = Math.min(23, customHours + 2);
+                        setCustomHours(newHours);
+                        updateTimeAndTimer(newHours, customMinutes, customSeconds);
+                      }}
+                      className="mb-2 w-8 h-6 bg-purple-100 hover:bg-purple-200 dark:bg-purple-800 dark:hover:bg-purple-700 text-purple-700 dark:text-purple-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▲
+                    </button>
+                    <div className="flex flex-col items-center">
+                      <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none mb-1">
+                        {time.hours}
+                      </div>
+                      <div className="text-purple-600 dark:text-purple-400 text-xs font-medium">HR</div>
+                    </div>
+                    {/* Down Arrow for Hours */}
+                    <button
+                      onClick={() => {
+                        const newHours = Math.max(0, customHours - 2);
+                        setCustomHours(newHours);
+                        updateTimeAndTimer(newHours, customMinutes, customSeconds);
+                      }}
+                      className="mt-2 w-8 h-6 bg-purple-100 hover:bg-purple-200 dark:bg-purple-800 dark:hover:bg-purple-700 text-purple-700 dark:text-purple-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  
+                  {/* Separator */}
+                  <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none self-center">:</div>
+                  
+                  {/* Minutes */}
+                  <div className="text-center relative flex flex-col items-center">
+                    {/* Up Arrow for Minutes */}
+                    <button
+                      onClick={() => {
+                        const newMinutes = Math.min(59, customMinutes + 2);
+                        setCustomMinutes(newMinutes);
+                        updateTimeAndTimer(customHours, newMinutes, customSeconds);
+                      }}
+                      className="mb-2 w-8 h-6 bg-green-100 hover:bg-green-200 dark:bg-green-800 dark:hover:bg-green-700 text-green-700 dark:text-green-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▲
+                    </button>
+                    <div className="flex flex-col items-center">
+                      <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none mb-1">
+                        {time.minutes}
+                      </div>
+                      <div className="text-purple-600 dark:text-purple-400 text-xs font-medium">MIN</div>
+                    </div>
+                    {/* Down Arrow for Minutes */}
+                    <button
+                      onClick={() => {
+                        const newMinutes = Math.max(0, customMinutes - 2);
+                        setCustomMinutes(newMinutes);
+                        updateTimeAndTimer(customHours, newMinutes, customSeconds);
+                      }}
+                      className="mt-2 w-8 h-6 bg-green-100 hover:bg-green-200 dark:bg-green-800 dark:hover:bg-green-700 text-green-700 dark:text-green-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  
+                  {/* Separator */}
+                  <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none self-center">:</div>
+                  
+                  {/* Seconds */}
+                  <div className="text-center relative flex flex-col items-center">
+                    {/* Up Arrow for Seconds */}
+                    <button
+                      onClick={() => {
+                        const newSeconds = Math.min(59, customSeconds + 2);
+                        setCustomSeconds(newSeconds);
+                        updateTimeAndTimer(customHours, customMinutes, newSeconds);
+                      }}
+                      className="mb-2 w-8 h-6 bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-700 dark:text-blue-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▲
+                    </button>
+                    <div className="flex flex-col items-center">
+                      <div className="text-3xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none mb-1">
+                        {time.seconds}
+                      </div>
+                      <div className="text-purple-600 dark:text-purple-400 text-xs font-medium">SEC</div>
+                    </div>
+                    {/* Down Arrow for Seconds */}
+                    <button
+                      onClick={() => {
+                        const newSeconds = Math.max(0, customSeconds - 2);
+                        setCustomSeconds(newSeconds);
+                        updateTimeAndTimer(customHours, customMinutes, newSeconds);
+                      }}
+                      className="mt-2 w-8 h-6 bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-700 dark:text-blue-300 rounded flex items-center justify-center transition-colors text-xs font-bold"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
-      )}
 
-      {/* Digital Timer Display */}
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center space-x-2 mb-6">
-          {(() => {
-            const time = formatTimeDetailed(timeLeft);
-            return (
-              <>
-                {/* Hours */}
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none">
-                    {time.hours}
-                  </div>
-                  <div className="text-purple-600 dark:text-purple-400 text-xs mt-1 font-medium">Hours</div>
-                </div>
-                
-                {/* Separator */}
-                <div className="text-5xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none">:</div>
-                
-                {/* Minutes */}
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none">
-                    {time.minutes}
-                  </div>
-                  <div className="text-purple-600 dark:text-purple-400 text-xs mt-1 font-medium">Minutes</div>
-                </div>
-                
-                {/* Separator */}
-                <div className="text-5xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none">:</div>
-                
-                {/* Seconds */}
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-purple-900 dark:text-purple-100 font-mono leading-none">
-                    {time.seconds}
-                  </div>
-                  <div className="text-purple-600 dark:text-purple-400 text-xs mt-1 font-medium">Seconds</div>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-
-        {/* Control Buttons */}
-        <div className="flex gap-4 justify-center mb-4">
+        {/* Control Buttons - Right Side */}
+        <div className="flex flex-col gap-3 flex-shrink-0">
           {!isActive ? (
             <button
               onClick={startTimer}
-              className="px-8 py-3 bg-emerald-600 text-white text-lg font-bold rounded-full hover:bg-emerald-700 shadow-lg transition-all duration-200 transform hover:scale-105"
+              className="px-5 py-2 bg-emerald-600 text-white text-sm font-bold rounded-full hover:bg-emerald-700 shadow-md transition-all duration-200 transform hover:scale-105 min-w-[70px]"
             >
               Start
             </button>
           ) : (
             <button
               onClick={pauseTimer}
-              className="px-8 py-3 bg-amber-600 text-white text-lg font-bold rounded-full hover:bg-amber-700 shadow-lg transition-all duration-200 transform hover:scale-105"
+              className="px-5 py-2 bg-amber-600 text-white text-sm font-bold rounded-full hover:bg-amber-700 shadow-md transition-all duration-200 transform hover:scale-105 min-w-[70px]"
             >
               Pause
             </button>
           )}
           <button
             onClick={resetTimer}
-            className="px-8 py-3 bg-purple-600 text-white text-lg font-bold rounded-full hover:bg-purple-700 shadow-lg transition-all duration-200 transform hover:scale-105"
+            className="px-5 py-2 bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700 shadow-md transition-all duration-200 transform hover:scale-105 min-w-[70px]"
           >
             Reset
           </button>
-        </div>
-
-        {/* Timer Info */}
-        <div className="text-purple-600 dark:text-purple-400 text-xs">
-          🎯 Work: {customHours.toString().padStart(2, '0')}:{customMinutes.toString().padStart(2, '0')}:{customSeconds.toString().padStart(2, '0')} • 💚 Break: 5min • {isBreak ? "Take a break!" : "Stay focused!"}
         </div>
       </div>
 
