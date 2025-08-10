@@ -8,6 +8,7 @@ import CalendarWidget from "./components/CalendarWidget";
 import TodoWidget from "./components/TodoWidget";
 import StudyGenie from "./components/StudyGenie";
 import PomodoroTimer from "./components/PomodoroTimer";
+import Profile from "./components/Profile";
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -187,7 +188,13 @@ export default function Dashboard() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [user, setUser] = useState<{ name: string | null }>({ name: null });
+  const [user, setUser] = useState<{ 
+    name: string | null; 
+    email?: string; 
+    profilePhoto?: string; 
+    bio?: string; 
+    occupation?: string;
+  }>({ name: null });
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const [selectedDayInfo, setSelectedDayInfo] = useState<{
     day: number | null;
@@ -199,6 +206,11 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAppearance, setShowAppearance] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("light");
+
+  // Handler for user profile updates
+  const handleUserUpdate = (updatedUser: any) => {
+    setUser(updatedUser);
+  };
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -547,7 +559,7 @@ export default function Dashboard() {
   );
 }
 
-useEffect(() => {
+  // Function to fetch/refresh user data
   const fetchUser = async () => {
     try {
       const res = await fetch("/api/me", {
@@ -565,6 +577,7 @@ useEffect(() => {
     }
   };
 
+useEffect(() => {
   fetchUser();
 }, []);
 
@@ -701,6 +714,19 @@ useEffect(() => {
         )}
         {selectedMenu === "StudyGenie" && (
           <StudyGenie />
+        )}
+        {selectedMenu === "Profile" && (
+          <Profile 
+            user={{
+              name: user.name || "",
+              email: user.email || "",
+              profilePhoto: user.profilePhoto,
+              bio: user.bio,
+              occupation: user.occupation
+            }}
+            onUserUpdate={handleUserUpdate}
+            onRefreshUser={fetchUser}
+          />
         )}
         {selectedMenu === "Settings" && (
           <div className="w-full p-10">
